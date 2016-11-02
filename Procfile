@@ -1,1 +1,1 @@
-web: apicalls -port=$PORT
+web: booksmart-api-server -port=$PORT
