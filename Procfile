@@ -1,1 +1,1 @@
-web: booksmartapi -port=$PORT
+web: booksmart-api-server -port=$PORT
