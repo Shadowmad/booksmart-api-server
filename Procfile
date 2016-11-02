@@ -1,1 +1,1 @@
-web: handleRequests -port=$PORT
+web: server -port=$PORT
