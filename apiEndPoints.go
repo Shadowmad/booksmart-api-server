@@ -3,11 +3,15 @@ package main
 import (
 	"encoding/json"
 	"fmt"
+	"io"
 	"net/http"
 
 	"github.com/gorilla/mux"
 )
 
+func welcome(w http.ResponseWriter, r *http.Request) {
+	io.WriteString(w, "Hello world!")
+}
 func returnCompiledBookSearh(w http.ResponseWriter, r *http.Request) {
 	//isbn := os.Args[1]
 	queryVar := mux.Vars(r)

@@ -9,6 +9,7 @@ import (
 
 func handleRequests() {
 	myRouter := mux.NewRouter().StrictSlash(true)
+	myRouter.HandleFunc("/", welcome)
 	myRouter.HandleFunc("/search/{service}/{isbn}", returnCompiledBookSearh)
 
 	log.Fatal(http.ListenAndServe(":8081", myRouter))
