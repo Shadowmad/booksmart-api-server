@@ -71,26 +71,31 @@ func abeResponse(isbn *string, channel chan<- []phpResponseStruct, cond *string)
 
 func parseAbeResponse(jq *jsonq.JsonQuery, channel chan<- []phpResponseStruct, cond *string) {
 	offers, err := jq.Interface("searchResults", "Book")
-	itemCond := ""
-	buildResp := new(phpResponseStruct)
-	if err != nil {
-		fmt.Println(err)
-	}
-	if *cond == "newonly" {
-		itemCond = "New"
-	} else if *cond == "usedonly" {
-		itemCond = "Used"
-	}
-	buildResp.Condition = itemCond
-	buildResp.Merchant = "abebooks"
-	buildResp.MerchantImage = ""
-	buildResp.TypeOf = "buy"
-	buildResp.Price = offers.(map[string]interface{})["listingPrice"].(string)
-	buildResp.Shipping = offers.(map[string]interface{})["firstBookShipCost"].(string)
-	buildResp.TotalPrice = strconv.FormatFloat(getTotalPrice(buildResp), 'f', 2, 64)
-	buildResp.LinkToBuy = "http://" + offers.(map[string]interface{})["listingUrl"].(string)
 
-	finalResp := new(phpHeaderName)
-	finalResp.HeaderName = append(finalResp.HeaderName, *buildResp)
-	channel <- finalResp.HeaderName
+	if(offers != nil){
+		itemCond := ""
+		buildResp := new(phpResponseStruct)
+		if err != nil {
+			fmt.Println(err)
+		}
+		if *cond == "newonly" {
+			itemCond = "New"
+		} else if *cond == "usedonly" {
+			itemCond = "Used"
+		}
+		buildResp.Condition = itemCond
+		buildResp.Merchant = "abebooks"
+		buildResp.MerchantImage = ""
+		buildResp.TypeOf = "buy"
+		buildResp.Price = offers.(map[string]interface{})["listingPrice"].(string)
+		buildResp.Shipping = offers.(map[string]interface{})["firstBookShipCost"].(string)
+		buildResp.TotalPrice = strconv.FormatFloat(getTotalPrice(buildResp), 'f', 2, 64)
+		buildResp.LinkToBuy = "http://" + offers.(map[string]interface{})["listingUrl"].(string)
+
+		finalResp := new(phpHeaderName)
+		finalResp.HeaderName = append(finalResp.HeaderName, *buildResp)
+		channel <- finalResp.HeaderName
+	}else{
+		close(channel)
+	}
 }
