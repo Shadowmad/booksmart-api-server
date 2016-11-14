@@ -88,9 +88,9 @@ func parseAbeResponse(jq *jsonq.JsonQuery, channel chan<- []phpResponseStruct, c
 	buildResp.Price = offers.(map[string]interface{})["listingPrice"].(string)
 	buildResp.Shipping = offers.(map[string]interface{})["firstBookShipCost"].(string)
 	buildResp.TotalPrice = strconv.FormatFloat(getTotalPrice(buildResp), 'f', 2, 64)
-  buildResp.LinkToBuy  = "http://" + offers.(map[string]interface{})["listingUrl"].(string)
+	buildResp.LinkToBuy = "http://" + offers.(map[string]interface{})["listingUrl"].(string)
 
-  finalResp := new(phpHeaderName)
-  finalResp.HeaderName = append(finalResp.HeaderName, *buildResp)
-  channel<- finalResp.HeaderName
+	finalResp := new(phpHeaderName)
+	finalResp.HeaderName = append(finalResp.HeaderName, *buildResp)
+	channel <- finalResp.HeaderName
 }

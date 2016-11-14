@@ -2,6 +2,7 @@ package main
 
 import (
 	jsonLib "encoding/json"
+	"fmt"
 	"net/http"
 	"strconv"
 	"strings"
@@ -18,7 +19,7 @@ const (
 	AssociateTag   = "booksmart044-20"
 )
 
-func amazonResponse(product_id *string, channel chan<- []phpResponseStruct) {
+func amazonResponse(product_id *string, channel chan<- []phpResponseStruct, sellOrBuy string) {
 	var api amazonproduct.AmazonProductAPI
 
 	api.AccessKey = AWSAccessKeyId
@@ -37,11 +38,48 @@ func amazonResponse(product_id *string, channel chan<- []phpResponseStruct) {
 		dec := jsonLib.NewDecoder(strings.NewReader(jsonstring))
 		dec.Decode(&data)
 		jq := jsonq.NewQuery(data)
-		compileResponse(jq, channel)
+		if sellOrBuy == "buy" {
+			compileResponse(jq, channel)
+		}
+		if sellOrBuy == "sell" {
+			compileSellResponse(jq, channel)
+		}
 
 	}
 }
-
+func compileSellResponse(jsonResp *jsonq.JsonQuery, channel chan<- []phpResponseStruct) {
+	checkForEligibility, _ := jsonResp.String("ItemLookupResponse", "Items", "Item", "ItemAttributes", "IsEligibleForTradeIn")
+	finalResp  := new(phpHeaderName)
+	if checkForEligibility == "1" {
+		conditions := [2]string{"new", "good"}
+		amazonLink := ""
+		merchantName := "amazon"
+		merchantImage := ""
+		sellPrice, err := jsonResp.String("ItemLookupResponse", "Items", "Item", "ItemAttributes", "TradeInValue", "Amount")
+		sellPriceInt, _   := strconv.Atoi(sellPrice)
+		if err != nil {
+			fmt.Println(err)
+		}
+		sellBuild := new(phpResponseStruct)
+		sellBuild.Merchant  = merchantName
+		sellBuild.MerchantImage = merchantImage
+		sellBuild.LinkToBuy 		= amazonLink
+		sellBuild.Condition	= "complex"
+		sellBuild.LinkToBuy = "http://www.amazon.com/s?index=textbooks-tradein&tag=" + AssociateTag + "&field-keywords="
+		for i := range conditions {
+			if(conditions[i] == "new"){
+				sellBuild.BB_cond_new = conditions[i]
+				sellBuild.BB_price_new = strconv.FormatFloat((float64(sellPriceInt) / 100), 'f', 2, 64)
+			}
+			if(conditions[i] == "good"){
+				sellBuild.BB_cond_good = conditions[i]
+				sellBuild.BB_price_good = strconv.FormatFloat((float64(sellPriceInt) / 100), 'f', 2, 64)
+			}
+		}
+		finalResp.HeaderName = append(finalResp.HeaderName, *sellBuild)
+	}
+	channel <- finalResp.HeaderName
+}
 func compileResponse(jsonResp *jsonq.JsonQuery, channel chan<- []phpResponseStruct) {
 	offers, _ := jsonResp.ArrayOfObjects("ItemLookupResponse", "Items", "Item", "Offers", "Offer")
 	finalResp := new(phpHeaderName)

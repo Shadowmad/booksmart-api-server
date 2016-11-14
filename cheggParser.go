@@ -2,6 +2,7 @@ package main
 
 import (
 	jsonLib "encoding/json"
+	"fmt"
 	"io/ioutil"
 	"net/http"
 	"strconv"
@@ -41,6 +42,7 @@ func cheggResponse(isbn *string, channel chan<- []phpResponseStruct) {
 	  @Purpose Start fetching
 	*/
 	client := &http.Client{}
+	fmt.Println(req)
 	response, err := client.Do(req)
 	if err != nil {
 		panic("Client could not fetch data...")
@@ -50,7 +52,7 @@ func cheggResponse(isbn *string, channel chan<- []phpResponseStruct) {
 		panic("Cannot read body data from response...")
 	}
 	//Turn JSON response into Golang map for futher processing
-	if(body != nil){
+	if body != nil {
 		jsonstring := string(body)
 		data := map[string]interface{}{}
 		dec := jsonLib.NewDecoder(strings.NewReader(jsonstring))
@@ -72,7 +74,7 @@ func compileCheggResponse(jsonResp *jsonq.JsonQuery, channel chan<- []phpRespons
 		buildResp.MerchantImage = ""
 		buildResp.Shipping = shipingPrice
 		buildResp.LinkToBuy = "http://chggtrx.com/click.track?CID=267582&AFID=412909&ADID=1088031&SID=&isbn_ean=" + *isbn
-							
+
 		//Rent
 		rent, _ := jsonResp.Bool("Data", "Items", "0", "Renting")
 		if rent && !rentDone {
