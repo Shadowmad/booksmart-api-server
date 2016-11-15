@@ -48,7 +48,6 @@ func (api AmazonProductAPI) genSignAndFetch(Operation string, Parameters map[str
 	if err != nil {
 		return "", err
 	}
-
 	return string(body), nil
 }
 

@@ -13,7 +13,7 @@ ItemLookup takes a product ID (ASIN) and returns the result
 func (api AmazonProductAPI) ItemLookup(ItemId string) (string, error) {
 	params := map[string]string{
 		"IdType": "ASIN",
-		"ResponseGroup" : "Small,OfferFull",
+		"ResponseGroup" : "Small,OfferFull,ItemAttributes",
 		"Condition" : "All",
 		"ItemId":        ItemId,
 

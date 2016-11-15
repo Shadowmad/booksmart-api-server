@@ -2,13 +2,10 @@
 	"ImportPath": "apicalls",
 	"GoVersion": "go1.5",
 	"GodepVersion": "v74",
-	"Packages": [
-		"./..."
-	],
 	"Deps": [
 		{
 			"ImportPath": "github.com/Shadowmad/go-amazon-product-api",
-			"Rev": "188c00fd2e0237bf5e8711dd35dfe2d3f496a95c"
+			"Rev": "882ff1196c2ec56ae5ae0f37b354d7f9e3763896"
 		},
 		{
 			"ImportPath": "github.com/basgys/goxml2json",
