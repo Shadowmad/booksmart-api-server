@@ -96,8 +96,9 @@ func compileResponse(jsonResp *jsonq.JsonQuery, channel chan<- []phpResponseStru
 		readyResp.Merchant = "amazon"
 		readyResp.MerchantImage = "" //to take from config files
 		readyResp.Condition = offers[i]["OfferAttributes"].(map[string]interface{})["Condition"].(string)
-		readyResp.Price = offers[i]["OfferListing"].(map[string]interface{})["Price"].(map[string]interface{})["FormattedPrice"].(string)
-		readyResp.Shipping = "0"
+		AmazonPrice, _ := strconv.ParseFloat(offers[i]["OfferListing"].(map[string]interface{})["Price"].(map[string]interface{})["Amount"].(string), 64)
+		readyResp.Price = strconv.FormatFloat(AmazonPrice/100, 'f', 2, 64)
+		readyResp.Shipping = "0.00"
 		readyResp.TypeOf = "sale"
 
 		itemAmountInt, _ := strconv.Atoi(offers[i]["OfferListing"].(map[string]interface{})["Price"].(map[string]interface{})["Amount"].(string))

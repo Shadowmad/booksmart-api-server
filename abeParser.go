@@ -87,8 +87,10 @@ func parseAbeResponse(jq *jsonq.JsonQuery, channel chan<- []phpResponseStruct, c
 		buildResp.Merchant = "abebooks"
 		buildResp.MerchantImage = ""
 		buildResp.TypeOf = "buy"
-		buildResp.Price = offers.(map[string]interface{})["listingPrice"].(string)
-		buildResp.Shipping = offers.(map[string]interface{})["firstBookShipCost"].(string)
+		PriceFloat, _ := strconv.ParseFloat(offers.(map[string]interface{})["listingPrice"].(string), 64)
+		buildResp.Price = strconv.FormatFloat(PriceFloat, 'f', 2, 64)
+		ShippingFloat, _ := strconv.ParseFloat(offers.(map[string]interface{})["firstBookShipCost"].(string), 64)
+		buildResp.Shipping = strconv.FormatFloat(ShippingFloat, 'f', 2, 64)
 		buildResp.TotalPrice = strconv.FormatFloat(getTotalPrice(buildResp), 'f', 2, 64)
 		buildResp.LinkToBuy = "http://" + offers.(map[string]interface{})["listingUrl"].(string)
 
