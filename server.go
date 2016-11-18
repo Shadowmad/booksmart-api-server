@@ -3,7 +3,6 @@ package main
 import (
 	"log"
 	"net/http"
-	"os"
 
 	"github.com/gorilla/mux"
 )
@@ -14,7 +13,7 @@ func handleRequests() {
 	myRouter.HandleFunc("/search/buy/{isbn}", returnCompiledBookSearh)
 	myRouter.HandleFunc("/search/sell/{isbn}", returnCompiledSellBookSearh)
 
-	log.Fatal(http.ListenAndServe(":"+os.Getenv("PORT"), myRouter))
+	log.Fatal(http.ListenAndServe("", myRouter))
 }
 
 func main() {
