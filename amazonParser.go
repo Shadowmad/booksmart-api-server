@@ -50,7 +50,6 @@ func amazonResponse(product_id *string, channel chan<- []phpResponseStruct, sell
 func compileSellResponse(jsonResp *jsonq.JsonQuery, channel chan<- []phpResponseStruct) {
 	checkForEligibility, _ := jsonResp.String("ItemLookupResponse", "Items", "Item", "ItemAttributes", "IsEligibleForTradeIn")
 	finalResp  := new(phpHeaderName)
-	fmt.Println(jsonResp)
 	if checkForEligibility == "1" {
 		conditions := [2]string{"new", "good"}
 		amazonLink := ""
